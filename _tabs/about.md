@@ -13,7 +13,7 @@ order: 4
 - Korea Univ Blockchain institute `Blockchain Valley` Dev
 
 ## 2024
-- LG Electric, Cyber Security Engineering Unit, intern (Jan~Mar)
+- LG Electric, Cyber Security Engineering Unit, Internship (Jan~Mar)
 
 ## 2025
 - Dunamu X Theori `Upside Academy 1st`, Team `DeepHigh`
