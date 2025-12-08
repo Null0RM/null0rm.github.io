@@ -1,6 +1,6 @@
 ---
 title: (Write-up) Cykor CTF 2025 - Multi Chain Vault
-date: 2025-12-08 10:38:00 +0900
+date: 2025-12-08 09:30:00 +0900
 math: true
 ---
 
