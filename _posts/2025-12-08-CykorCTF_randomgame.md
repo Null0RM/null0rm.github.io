@@ -232,6 +232,8 @@ game 컨트랙트에서 유저가 호출할 수 있는 함수는 `game()`과 `st
 
 이러한 조건을 통과하면 된다.
 
+## BreakThrough
+
 ### modifier: onlyUnlocked
 ```js
 modifier onlyUnlocked() {
