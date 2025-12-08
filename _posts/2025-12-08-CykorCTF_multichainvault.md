@@ -655,4 +655,4 @@ contract CounterScript is Script {
 
 긴 풀이 과정에 비해 PoC는 굉장히 짧다. 결국 포인트는 receiver를 0x5 precompiled contract로 지정하는 것.
 
-재밌는 문제를 만들어준 [@bshyuunn](x.com/bshyuunn?s=21) 님에게 감사를~
+재밌는 문제를 만들어준 [@bshyuunn](https://x.com/bshyuunn?s=21) 님에게 감사를~
