@@ -36,7 +36,6 @@ assembly {
 check_address(to_check);
 
 ...
-
 ```
 
 아래의 방법을 통해 공격을 할 수 있다. 
