@@ -10,9 +10,10 @@ date: 2025-12-09 15:00:00 +0900
 bytes배열을 인자로 받는 함수를 대상으로 call하면, 대강 이러한 구조로 구성되어 calldata가 넘어간다.
 
 ```text
-함수: function execute(bytes calldata arg) external {}
-calldata:
-0xdeadbeef (function signature)
+- 함수: function execute(bytes calldata arg) external {}
+
+- calldata:
+0xdeadbeef                                                       (function signature)
 0000000000000000000000000000000000000000000000000000000000000020 (length의 offset)
 0000000000000000000000000000000000000000000000000000000000000040 (bytes데이터의 length)
 00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff (bytes데이터)
@@ -40,9 +41,10 @@ check_address(to_check);
 
 아래의 방법을 통해 공격을 할 수 있다. 
 ```text
-함수: function execute(bytes calldata arg) external {}
-calldata:
-0xdeadbeef (function signature)
+- 함수: function execute(bytes calldata arg) external {}
+
+- calldata:
+0xdeadbeef                                                       (function signature)
 00000000000000000000000000000000000000000000000000000000000000a0 (length의 offset)
 0000000000000000000000000000000000000000000000000000000000000040 (bytes데이터의 length)
 00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff (bytes데이터...1)
@@ -54,7 +56,7 @@ calldata:
 
 이렇게 payload를 전송하게 되면, 실제로 컨트랙트에서 `arg`라는 bytes 배열을 참조할 때 그 **길이와 데이터 모두를 변조**할 수 있는, 굉장한 공격을 할 수 있게 된다.
 
-solidity에서 이를 가장 쉽게 할 수 있는 방법은 (내가 생각하기에) bytes.concat을 활용하는 것이다. 
+solidity에서 이를 가장 쉽게 할 수 있는 방법은 (본인이 생각하기에) `bytes.concat`을 활용하는 것이다. 
 
 일반적으로, `abi.encode` / `abi.encodePacked` / `abi.encodeWithSelector`등 abi 포맷팅 함수는 오프셋, 길이 등에 대한 데이터를 자체적으로 붙여주기 때문에, 이를 통해 bytes배열을 세부적으로 만지기는 쉽지 않다. 
 때문에, bytes배열에 대한 메타데이터를 신경쓰지 않고 마음대로 정보를 추가하기 위해서는 `bytes.concat()`이 가장 좋은 듯 하다. 
