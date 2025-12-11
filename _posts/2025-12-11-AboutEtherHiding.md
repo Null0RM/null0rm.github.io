@@ -18,7 +18,7 @@ date: 2025-12-09 15:00:00 +0900
 
 2. 블록체인(Mainnet / BSC chain 등)에 Base64/XOR/Hex 등으로 인코딩된 악성코드를 담은 스마트 컨트랙트를 배포한다. (`string public payload` 형태)
 
-```JS
+```js
 // 삽입되는 로더 JS 코드 예시 (실제 사례들과 많이 다름)
 (async function() {
     // 1. Web3 인스턴스
@@ -46,7 +46,6 @@ date: 2025-12-09 15:00:00 +0900
 4. payload가 실행되어 피싱 공격이 실행된다.
 
 ## EtherHiding Sequence Diagram
-공격 흐름도
 !["EtherHiding Sequence Diagram"](assets/img/posts/2025-12-11-AboutEtherHiding/etherHidingSequence.png "EtherHiding Sequence Diagram")
 
 # 방어 대책?
@@ -54,11 +53,15 @@ EtherHiding을 통한 공격을 막기는 쉽지 않다는 생각이 든다. 애
 
 그리고 EtherHiding이 C&C 인프라로서 사용되는 것을 스캔하는 것도 힘들다. 
 > **어뷰징 컨트랙트 주소에 call하는 메서드를 찾아서 차단하면 되지 않나?**
+>
 > 새로운 컨트랙트를 배포하면 그만
 
 > **인코딩된 어뷰징 코드가 삽입된 컨트랙트를 탐지하여 막을 수 있지 않나?**
+>
 > 프록시 컨트랙트를 통해 우회 가능
+
 > **그런 컨트랙트를 전부 블랙리스팅한다고 치면?**
+>
 > Well-known DApp의 스토리지에 악성 JS코드를 삽입하여 이용할 수 있음
 
 이 외에도 수많은 우회 방식과 방어수단이 있을 수 있겠지만, 당장 생각나는 것들만 적어보았다. 
