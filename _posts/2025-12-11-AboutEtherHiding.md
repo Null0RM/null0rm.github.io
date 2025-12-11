@@ -47,7 +47,7 @@ date: 2025-12-09 15:00:00 +0900
 
 ## EtherHiding Sequence Diagram
 공격 흐름도
-!["EtherHiding Sequence Diagram"](assets/img/posts/2025-12-11-AboutEtherHiding "EtherHiding Sequence Diagram")
+!["EtherHiding Sequence Diagram"](assets/img/posts/2025-12-11-AboutEtherHiding/etherHidingSequence.png "EtherHiding Sequence Diagram")
 
 # 방어 대책?
 EtherHiding을 통한 공격을 막기는 쉽지 않다는 생각이 든다. 애초에 직접적인 공격기법이 아닌, 공격의 C&C 인프라로 블록체인 스토리지가 사용되는 것이기 때문에, 애초에 웹사이트 딴에서 악성 JS코드가 삽입되지 않아야 하거나, 피싱 링크를 누르지 않는 등 직접 대체하기는 힘들다. 
