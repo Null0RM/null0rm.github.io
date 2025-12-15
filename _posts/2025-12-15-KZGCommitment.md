@@ -6,54 +6,119 @@ math: true
 
 # 미완성
 
-Ethereum이 Rollup 생태계를 본격화하면서 Data Availability(DA) 문제가 드러났다. L2 Rollup은 L1 블록의 calldata를 읽어 상태 전이를 검증하는데, 블록당 calldata가 수십 MB로 폭증하면서 light client들이 이를 감당하기조차 힘들어지게 되었다. 
+Ethereum이 Rollup 생태계를 본격화하면서 Data Availability(DA) 문제가 드러났다. L2 Rollup은 L1 블록의 calldata를 읽어 상태 전이를 검증하는데, 블록당 calldata의 용량이 증가하고 거래 처리량이 늘어나면서, light client는 물론 full node에게도 데이터 저장 및 처리 부담이 커져 확장성 문제가 심화되었다.
 
 이 상태로는 모든 Rollup이 full node에 의존할 수 밖에 없었기 때문에, 이를 해결하기 위한 EIP-4844가 등장하였다. 
 
 # Blob 
-EIP-4844가 도입되며, transaction type 0x03을 지정받은 `Blob Carrying Transaction (Blob TX)`가 새로이 등장했다. 
+EIP-4844가 도입되면서, 새로운 트랜잭션 타입 `0x03`을 지정받은 `Blob-carrying Transaction (Blob TX)`이 등장했다.
 
-Blob은 EIP-4844에서 가장 중요한 개념이라 할 수 있겠는데, `Blob`은 **`무거운 data가 압축된 data`를 저장하는 새로운 저장공간**이라고 할 수 있겠다. 
-그리고 이더리움 Beacon chain의 node는 **`KZG Commitment scheme`**을 통해, Blob에 저장된 **무거운 data**에 특정 data가 포함되어있는지를 암호학적으로 검증할 수 있다. 
+`Blob`은 **L2 롤업의 데이터를 담기 위해 설계된, 기존 `calldata`보다 훨씬 저렴한 임시 저장(Ephemeral Storage) 공간이자 데이터 구조**라고 할 수 있다.
+
+또한 **이더리움 consensus 노드(Beacon Chain Node)**는 `KZG Commitment`를 통해, Blob 데이터 자체를 직접 다운로드하고 처리하지 않고도, 해당 데이터의 유효성 및 가용성(Data Availability, DA)을 암호학적으로 효율적으로 검증할 수 있다. 
 
 이번 글에서는 L2의 Rollup data가 KZG Commitment Scheme을 통해 어떻게 L1까지 도달하고, 검증받게되는지 그 과정을 다뤄볼 생각이다. 
 
 # Dive into KZG Commitment
 **notation**
-$\mathbb{F}$: BLS12-381 Scalar Field
+$\mathbb{F}_q$: BLS12-381 Scalar Field
 $G_1$: BLS12-381 $G_1$ Group (48 bytes)
 $G_2$: BLS12-381 $G_2$ Group (96 bytes)
 $e$: Pairing e: $G_1 \times G_2 \rightarrow G_T$
-$\omega$: 4096th root of unity $\in \mathbb{F}$
+$\omega$: 4096th root of unity $\in \mathbb{F}_q$
     $\omega \equiv 1, \omega \neq 1$ for $0 < k < 4096$
-$\tau$: trusted setup에서 선택된 secret $\in \mathbb{F}$
+$\tau$: trusted setup에서 선택된 secret $\in \mathbb{F}_q$
 
 ## 1. Rollup data -> Polynomial 
-L2 Sequencer는 우선 처음으로, blob에 넣을 데이터를 생성해주게 된다. 그 데이터의 종류는 rollup의 종류마다 다른데, 대표적으로 아래와 같다고 보면 된다. 
+L2 Sequencer는 우선 처음으로, blob에 넣을 rollup data를 Polynomial로 표현한다. 
+data의 종류는 rollup의 종류마다 다른데, 대표적으로 아래와 같다고 보면 된다. 
 - Optimism: Compressed tx batch
 - ZKSync: State delta + proof
 - Arbitrum: State root 변화 record
-=> bytes[131072] (=2^17)
+=> 128KB data
 
-이 rollup data는 4096 byte로 이루어져 있는데, 이는 아래와 같이 Blob 리스트로 변환되는 과정을 거친다. 
+이러한 rollup 데이터 131072바이트는 32바이트 청크 4096개로 분할되며, 각 청크는 $\mathbb{F}_q$의 원소로 변환된다.
 $$
-b_0 = bytes[0:32] mod q
-b_1 = bytes[32:64] mod q
-...
-b_{4095} = bytes[130048:131072] mod q
-
-\rightarrow Blob = [b_0,b_1,...,b_{4095}] \in \mathbb{F}^{4096}
+b_0 = bytes[0:32] mod q \\
+b_1 = bytes[32:64] mod q \\
+...\\
+b_{4095} = bytes[130048:131072] mod q\\
+\\
+\rightarrow Blob = [b_0,b_1,...,b_{4095}] \in \mathbb{F}_q^{4096}\\
 $$
 
 이제 각 Blob element들을 Polynomial에 매핑시켜주기 위해 아래 과정을 거쳐준다. 
 $$
-P(\omega^0) = b_0
-P(\omega^1) = b_1
-...
-P(\omega^4095) = b_{4095}
+P(\omega^0) = b_0\\
+P(\omega^1) = b_1\\
+...\\
+P(\omega^4095) = b_{4095}\\
 $$
-즉, polynomial의 domain(정의역)은 $\omega^i$ (i=0,1,...,4095)가 되고, 이에 대한 매핑은 $b^i$ (i=0,1,...,4095)가 된다. 
+즉, 구하고자 하는 P(x)는 4096개의 특정한 점, 즉 유한체 상의 4096차 근 $\omega^i$ (i=0,1,...,4095)에서 Blob data $b_i$의 값을 가지도록 Interpolation된다.
 
-이렇게 관계가 만들어졌으면, 이를 바탕으로 **유일한** Polynomial을 만들 수 있다. (**유일한** Polynomial이 만들어지는 이유는 중고등학교에서 잘 배우니까... 생략하도록 하겠다.) 아래와 같이 표현한다. 
+이렇게 관계가 만들어졌으면, 이를 바탕으로 4096개의 point를 통과하는 차수가 4095 이하인 다항식 P(x)가 유일하게 결정된다. 
+
+아래와 같이 표현할 수 있다. 
 $$P(x) = \Sigma_{i=0}^{4095}c_ix^i$$
 
+## 2. Define Lagrange Interpolation Polynomial
+Lagrange InterPolation Polynomial을 정의해주는 이유는 보통 한 가지이다. 풀어보면 다음과 같은데, 
+$$L_j(x)=\Pi_{k=0, k \neq j}^{4095}\frac{x-\omega^k}{\omega^j-\omega^k}$$
+이는 각 j에 대해 j번째 점에서만 1, 나머지 점에서는 0이 되는 basis 다항식이라고 해석할 수 있다. 
+즉, 
+$$
+L_j(\omega^m)=1 \text{if }j=m\\
+L_j(\omega^m)=0 \text{if }j\neq m
+$$
+
+## 3. Reconstruct P(x) by Lagrang Basis
+이제 앞서 정의했던 다항식 P(x)를 새롭게 정의한 Domain인 $L_j(x)$를 바탕으로 다시 정의해보자. 
+$$P(x)=\Sigma_{j=0}^{4095}P(\omega^j)\cdot L_j(x)$$
+이는 다시, 아래와 같이 정의된다. 
+$$P(x)=\Sigma_{j=0}^{4095}b_j\cdot L_j(x)$$
+
+하지만 L2 Sequencer는 Polynomial 전체를 L1에 제출하는 대신, Polynomial의 특정 지점에서의 Evaluation(값)을 암호화하여 Commitment를 생성한다. 이 Commitment는 Polynomial P(x) 자체를 간결하게 대변하는 역할을 하며, 이것이 바로 KZG Commitment의 핵심이 된다.
+
+이 Commitment를 생성하는 데 사용되는 Evaluation Point은 Trusted Setup을 통해 미리 선택된 secret 값 $\tau$ 이다. 
+
+이를 이용해보면, 
+특별한 point $x = \tau$ 에서:
+$$
+P(\tau)=\Sigma_{j=0}^{4095}b_j\cdot L_j(\tau)\\
+L_j(\tau)=\Pi_{k=0, k \neq j}^{4095}\frac{\tau-\omega^k}{\omega^j-\omega^k} \in \mathbb{F}_q\\
+(L_j(\tau)\text{는 상수: }\tau \text{가 고정되어있어 미리 계산 가능.})
+$$
+
+## 4. Trusted Setup -> Group Element
+Trusted setup 단계에서는 $\tau$의 거듭제곱에 대한 $G_1$원소 $(\tau^i\cdot G_1)$와 함께, Lagrange Basis Polynomial의 $\tau$에서의 evaluation에 대한 $G_1$원소 $L_j(\tau)\cdot G_1$를 미리 계산하여 배포한다.
+이 값들이 검증을 위한 핵심 reference string이 되는 것이다. 
+-> $L_j(\tau)\cdot G_1 \text{ for j=0..4095}$
+
+## 5. KZG Commitment
+드디어 마무리 단계이다. 앞서 힘들게 Lagrange Interpolation Polynomial을 정의해준 진가가 발휘되는 순간이다. 
+$$
+\text{commitment } C=\Sigma_{j=0}^{4095}b_j\cdot L_j(\tau)\cdot G_1 \\
+= P(\tau)\cdot G_1
+$$
+
+위 Lagrange Interpoation형태의 P(x)를 $\tau$ 지점에서 evaluate한 값 $P(\tau)$ 는 $G_1$ 그룹의 generator $G_1$ 에 곱해져 아래와 같이 commitment $C$로 표현된다. 
+$$
+C=P(\tau)\cdot G_1\in G_1
+$$
+
+이 과정을 통해 128KB의 rollup data를 단 48B 크기의 단일 $G_1$ 그룹 원소인 KZG Commitment $C$로 압축할 수 있다.
+
+이를 코드로 나타내면 아래와 같다.
+```python
+computed_kzg = bls.Z1  # 0 · G₁ (영점)
+
+for j, (value, point_kzg) in enumerate(zip(blob, KZG_SETUP_LAGRANGE)):
+    # value = bⱼ ∈ F_BLS
+    # point_kzg = Lⱼ(τ) · G₁
+    temp = bls.multiply(point_kzg, value)     # bⱼ · [Lⱼ(τ) · G₁]
+    computed_kzg = bls.add(computed_kzg, temp) # 누적 합
+
+# 최종: C = P(τ) · G₁ (48 bytes)
+```
+
+이러한 과정을 통해, 128
