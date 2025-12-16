@@ -173,7 +173,7 @@ $P(z)=y$라면, 다항식 $P(x)-y$는 $(x-z)$로 나눠 떨어져야 하기 때�
 
 $$
 \begin{aligned}
-P(x) -  y = (x - z)\cdot Q(x)//
+P(x) -  y = (x - z)\cdot Q(x) \\
 Q(x) = frac{P(x) - y}{x - z}
 \end{aligned}
 $$
