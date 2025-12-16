@@ -22,13 +22,12 @@ EIP-4844가 도입되면서, 새로운 트랜잭션 타입 `0x03`을 지정받�
 
 # Dive into KZG Commitment
 **notation**
-$\mathbb{F}_q$: BLS12-381 Scalar Field
-$G_1$: BLS12-381 $G_1$ Group (48 bytes)
-$G_2$: BLS12-381 $G_2$ Group (96 bytes)
-$e$: Pairing e: $G_1 \times G_2 \rightarrow G_T$
-$\omega$: 4096th root of unity $\in \mathbb{F}_q$
-    $\omega \equiv 1, \omega \neq 1$ for $0 < k < 4096$
-$\tau$: trusted setup에서 선택된 secret $\in \mathbb{F}_q$
+- $\mathbb{F}_q$: BLS12-381 Scalar Field
+- $G_1$: BLS12-381 $G_1$ Group (48 bytes)
+- $G_2$: BLS12-381 $G_2$ Group (96 bytes)
+- $e$: Pairing e: $G_1 \times G_2 \rightarrow G_T$
+- $\omega$: 4096th root of unity $\in \mathbb{F}_q$
+- $\tau$: trusted setup에서 선택된 secret $\in \mathbb{F}_q$
 
 ## 1. Rollup data -> Polynomial 
 L2 Sequencer는 우선 처음으로, blob에 넣을 rollup data를 Polynomial로 표현한다. 
@@ -142,6 +141,7 @@ $$
 이 과정을 통해 128KB의 rollup data를 단 48B 크기의 단일 $G_1$ 그룹 원소인 KZG Commitment $C$로 압축할 수 있다.
 
 이를 코드로 나타내면 아래와 같다.
+
 ```python
 computed_kzg = bls.Z1   # 0 · G₁ (영점)
 
@@ -152,3 +152,4 @@ for j, (value, point_kzg) in enumerate(zip(blob, KZG_SETUP_LAGRANGE)):
     computed_kzg = bls.add(computed_kzg, temp) # 누적 합
 
 # 최종: C = P(τ) · G₁ (48 bytes)
+```
