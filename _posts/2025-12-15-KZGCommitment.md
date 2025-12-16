@@ -189,6 +189,26 @@ Prover는 이제 $(z,y,\pi)$ 를 Verifier에게 제출할 수 있다.
 > 자, point $z$에서 polynomial $P(x)$의 값은 $y$이고, 그 증거로 몫다항식의 commitment $\pi$를 줄게.
 
 # Verification by Bilinear Pairing 
-이 글에서 Bilinear Pairing에 대해 자세히 다루기는 어려울 것 같다... 
+이제 Verifier(L1 node)의 차례다. Verifier는 $\tau$값을 모르지만, Bilinear Pairing (연산 e)를 활용하면 이를 몰라도 검증을 할 수 있다. 
 
+KZG Commitment의 핵심 아이디어는 **암호화된 상태(타원곡선상)**에서 곱셈을 검증하는 것이다. 아래가 Verifier가 검증해야 할 등식이다. 
 
+$$
+P(\tau) - y \stackrel{?}{=} Q(\tau)\cdot (\tau - z)
+$$ 
+
+이를 Bilinear Pairing함수 $e: G_1 \times G_2 \rightarrow G_T$ 로 옮기면 다음과 같다:
+
+$$
+e(C-y\cdot G_1, G_2) \stackrel{?}{=} e(\pi, (\tau - z)\cdot G_2)
+$$
+
+이 식을 해석해보자.
+1. 좌변: (Commitment $C$ - $y$)와 1(Generator $G_2$)를 곱(pairing)한다. $P(\tau) - y$ 와 같음.
+2. 우변: proof $\pi$와 $\tau - z$를 곱한다. $Q(\tau)\cdot (\tau - z)$ 와 같음.
+
+이 등식이 성립한다면, $\tau$를 몰라도 $P(z) - y$ 임을 암호학적으로 보장할 수 있는 것이다. 
+
+**아래는 일련의 과정들을 표현한 시퀀스 도식이다.**
+
+![KZG sequence](/assets/img/posts/2025-12-15-KZGCommitment/KZGCommitment_sequence.png "KZG sequence")
