@@ -4,8 +4,6 @@ date: 2025-12-15 15:00:00 +0900
 math: true
 ---
 
-# ---------------- 미완성(작업 환경 이슈로 테스트 못하고 직접 박으면서 봐야합니다) -----------------
-
 Ethereum이 Rollup 생태계를 본격화하면서 Data Availability(DA) 문제가 드러났다. 
 L2 Rollup은 L1 블록의 calldata를 읽어 상태 전이를 검증하는데, 블록당 calldata의 용량이 증가하고 거래 처리량이 늘어나면서, light client는 물론 full node에게도 데이터 저장 및 처리 부담이 커져 확장성 문제가 심화되었다.
 
