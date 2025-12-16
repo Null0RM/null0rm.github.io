@@ -6,9 +6,10 @@ math: true
 
 # 미완성
 
-Ethereum이 Rollup 생태계를 본격화하면서 Data Availability(DA) 문제가 드러났다. L2 Rollup은 L1 블록의 calldata를 읽어 상태 전이를 검증하는데, 블록당 calldata의 용량이 증가하고 거래 처리량이 늘어나면서, light client는 물론 full node에게도 데이터 저장 및 처리 부담이 커져 확장성 문제가 심화되었다.
+Ethereum이 Rollup 생태계를 본격화하면서 Data Availability(DA) 문제가 드러났다. 
+L2 Rollup은 L1 블록의 calldata를 읽어 상태 전이를 검증하는데, 블록당 calldata의 용량이 증가하고 거래 처리량이 늘어나면서, light client는 물론 full node에게도 데이터 저장 및 처리 부담이 커져 확장성 문제가 심화되었다.
 
-이 상태로는 모든 Rollup이 full node에 의존할 수 밖에 없었기 때문에, 이를 해결하기 위한 EIP-4844가 등장하였다. 
+이 상태로는 모든 Rollup이 full node에 의존할 수 밖에 없었기 때문에, 이를 해결하기 위한 EIP-4844가 제안되었다. 
 
 # Blob 
 EIP-4844가 도입되면서, 새로운 트랜잭션 타입 `0x03`을 지정받은 `Blob-carrying Transaction (Blob TX)`이 등장했다.
@@ -38,70 +39,102 @@ data의 종류는 rollup의 종류마다 다른데, 대표적으로 아래와 �
 => 128KB data
 
 이러한 rollup 데이터 131072바이트는 32바이트 청크 4096개로 분할되며, 각 청크는 $\mathbb{F}_q$의 원소로 변환된다.
+
 $$
-b_0 = bytes[0:32] mod q \\
-b_1 = bytes[32:64] mod q \\
-...\\
-b_{4095} = bytes[130048:131072] mod q\\
+\begin{aligned}
+b_0 &= bytes[0:32] \pmod q \\
+b_1 &= bytes[32:64] \pmod q \\
+&...\\
+b_{4095} &= bytes[130048:131072] \pmod q\\
 \\
-\rightarrow Blob = [b_0,b_1,...,b_{4095}] \in \mathbb{F}_q^{4096}\\
+\rightarrow Blob &= [b_0,b_1,...,b_{4095}] \in \mathbb{F}_q^{4096}
+\end{aligned}
 $$
 
 이제 각 Blob element들을 Polynomial에 매핑시켜주기 위해 아래 과정을 거쳐준다. 
-$$
-P(\omega^0) = b_0\\
-P(\omega^1) = b_1\\
-...\\
-P(\omega^4095) = b_{4095}\\
-$$
-즉, 구하고자 하는 P(x)는 4096개의 특정한 점, 즉 유한체 상의 4096차 근 $\omega^i$ (i=0,1,...,4095)에서 Blob data $b_i$의 값을 가지도록 Interpolation된다.
 
-이렇게 관계가 만들어졌으면, 이를 바탕으로 4096개의 point를 통과하는 차수가 4095 이하인 다항식 P(x)가 유일하게 결정된다. 
+$$
+\begin{aligned}
+P(\omega^0) &= b_0\\
+P(\omega^1) &= b_1\\
+&...\\
+P(\omega^{4095}) &= b_{4095}
+\end{aligned}
+$$
+
+즉, 구하고자 하는 $P(x)$는 4096개의 특정한 점, 즉 유한체 상의 4096차 근 $\omega^i$ (i=0,1,...,4095)에서 Blob data $b_i$의 값을 가지도록 Interpolation된다.
+
+이렇게 관계가 만들어졌으면, 이를 바탕으로 4096개의 point를 통과하는 차수가 4095 이하인 다항식 $P(x)$가 유일하게 결정된다. 
 
 아래와 같이 표현할 수 있다. 
-$$P(x) = \Sigma_{i=0}^{4095}c_ix^i$$
+
+$$
+P(x) = \sum_{i=0}^{4095}c_ix^i
+$$
 
 ## 2. Define Lagrange Interpolation Polynomial
 Lagrange InterPolation Polynomial을 정의해주는 이유는 보통 한 가지이다. 풀어보면 다음과 같은데, 
-$$L_j(x)=\Pi_{k=0, k \neq j}^{4095}\frac{x-\omega^k}{\omega^j-\omega^k}$$
-이는 각 j에 대해 j번째 점에서만 1, 나머지 점에서는 0이 되는 basis 다항식이라고 해석할 수 있다. 
-즉, 
+
 $$
-L_j(\omega^m)=1 \text{if }j=m\\
-L_j(\omega^m)=0 \text{if }j\neq m
+L_j(x)=\prod_{k=0, k \neq j}^{4095}\frac{x-\omega^k}{\omega^j-\omega^k}
+$$
+
+이는 각 $j$에 대해 $j$번째 점에서만 1, 나머지 점에서는 0이 되는 basis 다항식이라고 해석할 수 있다. 
+즉, 
+
+$$
+\begin{aligned}
+L_j(\omega^m)=1 \quad &\text{if } j=m\\
+L_j(\omega^m)=0 \quad &\text{if } j\neq m
+\end{aligned}
 $$
 
 ## 3. Reconstruct P(x) by Lagrang Basis
-이제 앞서 정의했던 다항식 P(x)를 새롭게 정의한 Domain인 $L_j(x)$를 바탕으로 다시 정의해보자. 
-$$P(x)=\Sigma_{j=0}^{4095}P(\omega^j)\cdot L_j(x)$$
-이는 다시, 아래와 같이 정의된다. 
-$$P(x)=\Sigma_{j=0}^{4095}b_j\cdot L_j(x)$$
+이제 앞서 정의했던 다항식 $P(x)$를 새롭게 정의한 Domain인 $L_j(x)$를 바탕으로 다시 정의해보자. 
 
-하지만 L2 Sequencer는 Polynomial 전체를 L1에 제출하는 대신, Polynomial의 특정 지점에서의 Evaluation(값)을 암호화하여 Commitment를 생성한다. 이 Commitment는 Polynomial P(x) 자체를 간결하게 대변하는 역할을 하며, 이것이 바로 KZG Commitment의 핵심이 된다.
+$$
+P(x)=\sum_{j=0}^{4095}P(\omega^j)\cdot L_j(x)
+$$
+
+이는 다시, 아래와 같이 정의된다. 
+
+$$
+P(x)=\sum_{j=0}^{4095}b_j\cdot L_j(x)
+$$
+
+하지만 L2 Sequencer는 Polynomial 전체를 L1에 제출하는 대신, Polynomial의 특정 지점에서의 Evaluation(값)을 암호화하여 Commitment를 생성한다. 이 Commitment는 Polynomial $P(x)$ 자체를 간결하게 대변하는 역할을 하며, 이것이 바로 KZG Commitment의 핵심이 된다.
 
 이 Commitment를 생성하는 데 사용되는 Evaluation Point은 Trusted Setup을 통해 미리 선택된 secret 값 $\tau$ 이다. 
 
 이를 이용해보면, 
 특별한 point $x = \tau$ 에서:
+
 $$
-P(\tau)=\Sigma_{j=0}^{4095}b_j\cdot L_j(\tau)\\
-L_j(\tau)=\Pi_{k=0, k \neq j}^{4095}\frac{\tau-\omega^k}{\omega^j-\omega^k} \in \mathbb{F}_q\\
-(L_j(\tau)\text{는 상수: }\tau \text{가 고정되어있어 미리 계산 가능.})
+\begin{aligned}
+P(\tau) &= \sum_{j=0}^{4095}b_j\cdot L_j(\tau)\\
+L_j(\tau) &= \prod_{k=0, k \neq j}^{4095}\frac{\tau-\omega^k}{\omega^j-\omega^k} \in \mathbb{F}_q
+\end{aligned}
 $$
+
+($L_j(\tau)$는 상수: $\tau$가 고정되어있어 미리 계산 가능.)
 
 ## 4. Trusted Setup -> Group Element
 Trusted setup 단계에서는 $\tau$의 거듭제곱에 대한 $G_1$원소 $(\tau^i\cdot G_1)$와 함께, Lagrange Basis Polynomial의 $\tau$에서의 evaluation에 대한 $G_1$원소 $L_j(\tau)\cdot G_1$를 미리 계산하여 배포한다.
 이 값들이 검증을 위한 핵심 reference string이 되는 것이다. 
--> $L_j(\tau)\cdot G_1 \text{ for j=0..4095}$
+$\rightarrow L_j(\tau)\cdot G_1 \text{ for j=0..4095}$
 
 ## 5. KZG Commitment
 드디어 마무리 단계이다. 앞서 힘들게 Lagrange Interpolation Polynomial을 정의해준 진가가 발휘되는 순간이다. 
+
 $$
-\text{commitment } C=\Sigma_{j=0}^{4095}b_j\cdot L_j(\tau)\cdot G_1 \\
-= P(\tau)\cdot G_1
+\begin{aligned}
+\text{commitment } C &= \sum_{j=0}^{4095}b_j\cdot L_j(\tau)\cdot G_1 \\
+&= P(\tau)\cdot G_1
+\end{aligned}
 $$
 
-위 Lagrange Interpoation형태의 P(x)를 $\tau$ 지점에서 evaluate한 값 $P(\tau)$ 는 $G_1$ 그룹의 generator $G_1$ 에 곱해져 아래와 같이 commitment $C$로 표현된다. 
+위 Lagrange Interpoation형태의 $P(x)$를 $\tau$ 지점에서 evaluate한 값 $P(\tau)$ 는 $G_1$ 그룹의 generator $G_1$ 에 곱해져 아래와 같이 commitment $C$로 표현된다. 
+
 $$
 C=P(\tau)\cdot G_1\in G_1
 $$
@@ -110,7 +143,7 @@ $$
 
 이를 코드로 나타내면 아래와 같다.
 ```python
-computed_kzg = bls.Z1  # 0 · G₁ (영점)
+computed_kzg = bls.Z1   # 0 · G₁ (영점)
 
 for j, (value, point_kzg) in enumerate(zip(blob, KZG_SETUP_LAGRANGE)):
     # value = bⱼ ∈ F_BLS
@@ -119,6 +152,3 @@ for j, (value, point_kzg) in enumerate(zip(blob, KZG_SETUP_LAGRANGE)):
     computed_kzg = bls.add(computed_kzg, temp) # 누적 합
 
 # 최종: C = P(τ) · G₁ (48 bytes)
-```
-
-이러한 과정을 통해, 128
