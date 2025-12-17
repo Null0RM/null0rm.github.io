@@ -138,7 +138,7 @@ $$
 
 ($L_j(\tau)$는 상수: $\tau$가 고정되어있어 미리 계산 가능.)
 
-Trusted Setup의 단계에서는, $\tau$의 거듭제곱에 대한 $G_1$원소 $(\tau^i\cdot G_1)$와 함께, Lagrange Basis Polynomial의 $\tau$에서의 evaluation에 대한 $G_1$원소 $L_j(\tau)\cdot G_1$를 미리 계산하는 과정이 주를 이룬다.
+Trusted Setup의 단계에서는, $\tau$의 거듭제곱에 대한 $G_1$원소 $(\tau^i\cdot G_1)$와 함께, Lagrange Basis Polynomial의 $\tau$에서의 evaluation에 대한 $G_1$원소 $L_j(\tau)\cdot G_1$를 미리 계산한다. 
 
 $$
 \text{setup }=L_j(\tau)\cdot G_1 \text{ for j=0...4095}
