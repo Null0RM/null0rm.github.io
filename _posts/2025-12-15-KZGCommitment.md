@@ -18,7 +18,7 @@ EIP-4844가 도입되면서, 새로운 트랜잭션 타입 `0x03`을 지정받�
 
 이번 글에서는 L2의 Rollup data가 KZG Commitment Scheme을 통해 어떻게 L1까지 도달하고, 검증받게되는지 그 과정을 다뤄볼 생각이다. 
 
-# Commit by KZG Commitment (L2 Sequencer -> Verifier)
+# Commit by KZG Commitment
 
 **notation**
 - $\mathbb{F}_q$: BLS12-381 Scalar Field
@@ -161,7 +161,7 @@ $$
 
 이 과정을 통해 128KB의 rollup data를 단 48B 크기의 단일 $G_1$ 그룹 원소인 KZG Commitment $C$로 압축할 수 있다.
 
-# Challenge (Verifier -> L2 Sequencer)d
+# Challenge
 
 앞선 과정을 통해 128KB에 달하는 거대한 rollup data를 단 48B의 $C$(commitment)로 압축했다. 
 하지만, 검증자(L1 node) 입장에서는, 아래와 같은 의문이 들 수 있다. 
@@ -194,8 +194,8 @@ $$
 Prover는 이제 $(z,y,\pi)$ 를 Verifier에게 제출할 수 있다. 
 > 자, point $z$에서 polynomial $P(x)$의 값은 $y$이고, 그 증거로 몫다항식의 commitment인 proof $\pi$를 줄게.
 
-# Verification by Bilinear Pairing 
-이제 Verifier(L1 node)의 차례다. Verifier는 $\tau$값을 모르지만, Bilinear Pairing (연산 e)를 활용하면 이를 몰라도 검증을 할 수 있다. 
+# Verification
+이제 Verifier(L1 node)의 차례다. Verifier는 $\tau$값을 모르지만, Bilinear Pairing ($e: G_1\times G_2 \rightarrow G_T$)를 활용하면 이를 몰라도 검증을 할 수 있다. 
 
 KZG Commitment의 핵심 아이디어는 **암호화된 상태(타원곡선상)**에서 곱셈을 검증하는 것이다. 아래가 Verifier가 검증해야 할 등식이다. 
 
