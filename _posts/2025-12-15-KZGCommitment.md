@@ -144,13 +144,13 @@ $$
 \text{setup }=L_j(\tau)\cdot G_1 \text{ for j=0...4095}
 $$
 
-즉, 위에서 계산한 $P(\tau) &= \sum_{j=0}^{4095}b_j\cdot L_j(\tau)$ 는, 엄밀히 적용하면 $P(\tau) &= \sum_{j=0}^{4095}b_j\cdot L_j(\tau)\cdot G_1$ 으로 표현되는 것이다.
+즉, 위에서 계산한 $P(\tau) = \sum_{j=0}^{4095}b_j\cdot L_j(\tau)$ 는, 엄밀히 적용하면 $P(\tau) = \sum_{j=0}^{4095}b_j\cdot L_j(\tau)\cdot G_1$ 으로 표현되는 것이다.
 
 ## 5. KZG Commitment
 앞서 정의해준 polynomial을 통해, Commitment $C$를 생성해보자.
 
 $$
-C &= \sum_{j=0}^{4095}b_j\cdot L_j(\tau)\cdot G_1
+C = \sum_{j=0}^{4095}b_j\cdot L_j(\tau)\cdot G_1
 $$
 
 정리하면, 
