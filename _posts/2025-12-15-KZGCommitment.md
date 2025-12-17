@@ -144,7 +144,7 @@ $$
 \text{setup }=L_j(\tau)\cdot G_1 \text{ for j=0...4095}
 $$
 
-즉, 위에서 계산한 $P(\tau) = \sum_{j=0}^{4095}b_j\cdot L_j(\tau)$ 는, 엄밀히 적용하면 $P(\tau) = \sum_{j=0}^{4095}b_j\cdot L_j(\tau)\cdot G_1$ 으로 표현되는 것이다.
+즉, 위에서 계산한 $P(\tau) = \sum_{j=0}^{4095}b_j\cdot L_j(\tau)$ 는, 타원곡선상 계산을 위해 $G_1$이 곱해진 $P(\tau) = \sum_{j=0}^{4095}b_j\cdot L_j(\tau)\cdot G_1$ 이 맞는 표현이 된다. 
 
 ## 5. KZG Commitment
 앞서 정의해준 polynomial을 통해, Commitment $C$를 생성해보자.
@@ -211,9 +211,9 @@ $$
 
 이 식을 해석해보자.
 1. 좌변: (Commitment $C$ - $y$)와 1(Generator $G_2$)를 곱(pairing)한다. $P(\tau) - y$ 와 같음.
-2. 우변: proof $\pi$와 $\tau - z$를 곱한다. $Q(\tau)\cdot (\tau - z)$ 와 같음.
+2. 우변: proof $\pi$와 $\tau - z$를 곱(pairing)한다. $Q(\tau)\cdot (\tau - z)$ 와 같음.
 
-이 등식이 성립한다면, $\tau$를 몰라도 $P(z) - y$ 임을 암호학적으로 보장할 수 있는 것이다. 
+이 등식이 성립한다면, verifier는 $\tau$를 몰라도 $P(z) - y$ 임을 암호학적으로 보장할 수 있는 것이다. 
 
 **KZG Commitment 전체 과정.**
 
