@@ -99,13 +99,15 @@ P(\omega^0) = 3 \\
 P(\omega^1) = 5 \\
 P(\omega^2) = 2 \\
 \end{aligned}
-...
 $$
 
 이렇게 표현되어있을 때, $L_j(x)$를 적용해주면, 
 
 $$
-P(x) = P(\omega^0)\cdot L_0(x)+P(\omega^1)\cdot L_1(x)+P(\omega^2)\cdot L_2(x)
+\begin{aligned}
+P(x) = P(\omega^0)\cdot L_0(x)+P(\omega^1)\cdot L_1(x)+P(\omega^2)\cdot L_2(x) \\
+P(X) = P(\omega^0)\cdot \prod_{k=0, k \neq 0}^{4095}\frac{x-\omega^k}{\omega^0-\omega^k}+P(\omega^1)\cdot \prod_{k=0, k \neq 1}^{4095}\frac{x-\omega^k}{\omega^1-\omega^k}+P(\omega^2)\cdot \prod_{k=0, k \neq 2}^{4095}\frac{x-\omega^k}{\omega^2-\omega^k}
+\end{aligned}
 $$
 
 라는 것을 알 수 있다. 
