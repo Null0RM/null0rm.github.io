@@ -140,12 +140,16 @@ L_j(\tau) &= \prod_{k=0, k \neq j}^{4095}\frac{\tau-\omega^k}{\omega^j-\omega^k}
 \end{aligned}
 $$
 
-($L_j(\tau)$는 상수: $\tau$가 고정되어있어 미리 계산 가능.)
+Trusted Setup의 단계에서는, $\tau$의 거듭제곱에 대한 $G_1$원소 $(\tau^i\cdot G_1)$와, 
+Lagrange Basis Polynomial의 $\tau$에서의 evaluation에 대한 $G_1$원소 $L_j(\tau)\cdot G_1$의 set을 미리 계산한다. 
 
-Trusted Setup의 단계에서는, $\tau$의 거듭제곱에 대한 $G_1$원소 $(\tau^i\cdot G_1)$와 함께, Lagrange Basis Polynomial의 $\tau$에서의 evaluation에 대한 $G_1$원소 $L_j(\tau)\cdot G_1$를 미리 계산한다. 
+이 값들은 public으로 공개되어 검증에 활용된다. (단, $\tau$는 secret)
 
 $$
-\text{setup }=L_j(\tau)\cdot G_1 \text{ for j=0...4095}
+\begin{aligned}
+\text{powers of tau}=[\tau^i]_1 \\
+\text{setup }=[L_j(\tau)]_1
+\end{aligned}
 $$
 
 즉, 위에서 계산한 $P(\tau) = \sum_{j=0}^{4095}b_j\cdot L_j(\tau)$ 는, 타원곡선상 계산을 위해 $G_1$이 곱해진 $P(\tau) = \sum_{j=0}^{4095}b_j\cdot L_j(\tau)\cdot G_1$ 이 맞는 표현이 된다. 
@@ -154,13 +158,13 @@ $$
 앞서 정의해준 polynomial을 통해, Commitment $C$를 생성해보자.
 
 $$
-C = \sum_{j=0}^{4095}b_j\cdot L_j(\tau)\cdot G_1
+C = P(\tau)\cdot G_1 = \sum_{j=0}^{4095}b_j\cdot L_j(\tau)\cdot G_1
 $$
 
 정리하면, 
 
 $$
-C=P(\tau)\cdot G_1\in G_1
+C=[P(\tau)]_1
 $$
 
 이 과정을 통해 128KB의 rollup data를 단 48B 크기의 단일 $G_1$ 그룹 원소인 KZG Commitment $C$로 압축할 수 있다.
