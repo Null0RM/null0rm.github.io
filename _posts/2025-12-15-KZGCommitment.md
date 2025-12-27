@@ -14,7 +14,7 @@ EIP-4844가 도입되면서, 새로운 트랜잭션 타입 `0x03`을 지정받�
 
 `Blob`은 **L2 롤업의 데이터를 담기 위해 설계된, 기존 `calldata`보다 훨씬 저렴한 임시 저장 공간**라고 할 수 있다.
 
-또한 **이더리움 consensus 노드(Beacon Chain)**는 **`KZG Commitment`**를 통해, Blob 데이터 자체를 직접 다운로드하고 처리하지 않고도, 해당 데이터의 유효성을 값싸게 검증할 수 있다. 
+또한 **이더리움 consensus 노드(Beacon Chain)**는 **`KZG Commitment`**를 통해, Blob 데이터 자체를 영구적으로 다운로드하지 않고도, 해당 데이터의 유효성을 값싸게 검증할 수 있다. 
 
 이번 글에서는 L2의 Rollup data가 KZG Commitment Scheme을 통해 어떻게 L1까지 도달하고, 검증받게되는지 그 과정을 다뤄볼 생각이다. 
 
@@ -169,6 +169,8 @@ $$
 
 이 과정을 통해 128KB의 rollup data를 단 48B 크기의 단일 $G_1$ 그룹 원소인 KZG Commitment $C$로 압축할 수 있다.
 
+Commitment는 데이터를 **대체하는 것이 아니라 요약(fingerprint)**이며, blob 데이터 자체는 consensus layer로 전파된다.
+
 # Challenge
 
 앞선 과정을 통해 128KB에 달하는 거대한 rollup data를 단 48B의 $C$(commitment)로 압축했다. 
@@ -203,6 +205,9 @@ Prover는 이제 $(z,y,\pi)$ 를 Verifier에게 제출할 수 있다.
 > 자, point $z$에서 polynomial $P(x)$의 값은 $y$이고, 그 증거로 몫다항식의 commitment인 proof $\pi$를 줄게.
 
 # Verification
+
+이제 verifier는 **P 전체**를 모르면서도, **특정 점의 값이 맞는지**를 확인할 수 있다.
+
 이제 Verifier(L1 node)의 차례다. Verifier는 $\tau$값을 모르지만, Bilinear Pairing ($e: G_1\times G_2 \rightarrow G_T$)를 활용하면 이를 몰라도 검증을 할 수 있다. 
 
 KZG Commitment의 핵심 아이디어는 **암호화된 상태(타원곡선상)**에서 곱셈을 검증하는 것이다. 아래가 Verifier가 검증해야 할 등식이다. 
@@ -224,5 +229,4 @@ $$
 이 등식이 성립한다면, verifier는 $\tau$를 몰라도 $P(z) - y$ 임을 암호학적으로 보장할 수 있는 것이다. 
 
 **KZG Commitment 전체 과정.**
-
 ![KZG sequence](/assets/img/posts/2025-12-15-KZGCommitment/KZGCommitment_sequence.png "KZG sequence")
