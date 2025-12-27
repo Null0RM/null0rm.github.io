@@ -94,9 +94,11 @@ $$
 $P(\omega^j)=b_j$ 라는 것을 기억하면서, Polynomial $P(x)$의 쉬운 예시를 한 번 들어보자. 
 
 $$
+\begin{aligned}
 P(\omega^0) = 3 \\
 P(\omega^1) = 5 \\
 P(\omega^2) = 2 \\
+\end{aligned}
 ...
 $$
 
