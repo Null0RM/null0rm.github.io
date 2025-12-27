@@ -1,20 +1,20 @@
 ---
-title: KZG Commitment - How Crypto Saved Ethereum's DA?
+title: Proto-danksharding: eip-4844 & KZG Commitment
 date: 2025-12-15 15:00:00 +0900
 math: true
 ---
 
-Ethereum이 Rollup 생태계를 본격화하면서 Data Availability(DA) 문제가 드러났다. 
-L2 Rollup은 L1 블록의 calldata를 읽어 상태 전이를 검증하는데, 블록당 calldata의 용량이 증가하고 거래 처리량이 늘어나면서, light client는 물론 full node에게도 데이터 저장 및 처리 부담이 커져 확장성 문제가 심화되었다.
+Ethereum이 Execution의 기능은 L2로 전이하고, L1은 DA와 Consensus에 집중한다 선언하며, Dencun 업데이트와 함께 EIP-4844가 온보딩되었다. 
+기존의 Rollup은 L1 node가 L2 sequencer/operator가 보낸 calldata를 검증하는데, 블록당 calldata의 용량이 증가하고 거래 처리량이 늘어나면서, full node에게도 데이터 저장 및 처리 부담이 커졌다. 
 
-이 상태로는 모든 Rollup이 full node에 의존할 수 밖에 없었기 때문에, 이를 해결하기 위한 EIP-4844가 제안되었다. 
+calldata는 full node가 영구적으로 저장해야하는 데이터이기에, 데이터 비용을 줄이고자, Blob 데이터 공간이라는 개념을 도입하였다. 
 
 # Blob 
 EIP-4844가 도입되면서, 새로운 트랜잭션 타입 `0x03`을 지정받은 `Blob-carrying Transaction (Blob TX)`이 등장했다.
 
-`Blob`은 **L2 롤업의 데이터를 담기 위해 설계된, 기존 `calldata`보다 훨씬 저렴한 임시 저장 공간(데이터 구조)**라고 할 수 있다.
+`Blob`은 **L2 롤업의 데이터를 담기 위해 설계된, 기존 `calldata`보다 훨씬 저렴한 임시 저장 공간**라고 할 수 있다.
 
-또한 **이더리움 consensus 노드(Beacon Chain Node)**는 **`KZG Commitment`**를 통해, Blob 데이터 자체를 직접 다운로드하고 처리하지 않고도, 해당 데이터의 유효성 및 가용성(Data Availability, DA)을 암호학적으로 효율적으로 검증할 수 있다. 
+또한 **이더리움 consensus 노드(Beacon Chain)**는 **`KZG Commitment`**를 통해, Blob 데이터 자체를 직접 다운로드하고 처리하지 않고도, 해당 데이터의 유효성을 값싸게 검증할 수 있다. 
 
 이번 글에서는 L2의 Rollup data가 KZG Commitment Scheme을 통해 어떻게 L1까지 도달하고, 검증받게되는지 그 과정을 다뤄볼 생각이다. 
 
