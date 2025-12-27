@@ -1,5 +1,5 @@
 ---
-title: Proto-danksharding: eip-4844 & KZG Commitment
+title: Proto-danksharding, eip-4844 & KZG Commitment
 date: 2025-12-15 15:00:00 +0900
 math: true
 ---
