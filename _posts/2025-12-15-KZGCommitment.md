@@ -228,7 +228,7 @@ $$
 
 이 등식이 성립한다면, verifier는 $\tau$를 몰라도 $P(z) - y$ 임을 암호학적으로 보장할 수 있는 것이다. 
 
-이렇게, post-danksharding이라 불리는 EIP-4844에 대해 꽤나 자세히 알아보았다. 
+이렇게, proto-danksharding이라 불리는 EIP-4844에 대해 꽤나 자세히 알아보았다. 
 L2 Rollup의 롤업 데이터가 L1에서 어떻게 검증되고 어떻게 저장되는지의 일련의 과정을 살펴보았다.
 
 하지만, 위에서 설명한 과정과는 별개로, 실제 이더리움에서는 위에서 설명한 것과 같이 single-point에서만 검증을 하는 것이 아니라, 여러 random evaluation point를 선택하여 batch KZG proof verify를 진행한다.
