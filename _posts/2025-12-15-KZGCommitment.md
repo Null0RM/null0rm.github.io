@@ -106,7 +106,7 @@ $$
 $$
 \begin{aligned}
 P(x) = P(\omega^0)\cdot L_0(x)+P(\omega^1)\cdot L_1(x)+P(\omega^2)\cdot L_2(x) \\
-P(X) = P(\omega^0)\cdot \prod_{k=0, k \neq 0}^{4095}\frac{x-\omega^k}{\omega^0-\omega^k}+P(\omega^1)\cdot \prod_{k=0, k \neq 1}^{4095}\frac{x-\omega^k}{\omega^1-\omega^k}+P(\omega^2)\cdot \prod_{k=0, k \neq 2}^{4095}\frac{x-\omega^k}{\omega^2-\omega^k}
+P(x) = 3\cdot \prod_{k=0, k \neq 0}^{4095}\frac{x-\omega^k}{\omega^0-\omega^k}+5\cdot \prod_{k=0, k \neq 1}^{4095}\frac{x-\omega^k}{\omega^1-\omega^k}+2\cdot \prod_{k=0, k \neq 2}^{4095}\frac{x-\omega^k}{\omega^2-\omega^k}
 \end{aligned}
 $$
 
@@ -140,10 +140,10 @@ L_j(\tau) &= \prod_{k=0, k \neq j}^{4095}\frac{\tau-\omega^k}{\omega^j-\omega^k}
 \end{aligned}
 $$
 
-Trusted Setup의 단계에서는, $\tau$의 거듭제곱에 대한 $G_1$원소 $(\tau^i\cdot G_1)$와, 
-Lagrange Basis Polynomial의 $\tau$에서의 evaluation에 대한 $G_1$원소 $L_j(\tau)\cdot G_1$의 set을 미리 계산한다. 
-
+Trusted Setup의 단계에서는, $\tau$의 거듭제곱에 대한 $G_1$원소 $(\tau^i\cdot G_1)$와, $G_2$원소 $(\tau^i\cdot G_2)$가 계산된다. 
 이 값들은 public으로 공개되어 검증에 활용된다. (단, $\tau$는 secret)
+
+Lagrange Basis Polynomial의 $\tau$에서의 evaluation에 대한 $G_1$원소 $L_j(\tau)\cdot G_1$는 runtime에 FFT로 계산된다.
 
 $$
 \begin{aligned}
