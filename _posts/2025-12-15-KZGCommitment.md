@@ -228,5 +228,14 @@ $$
 
 이 등식이 성립한다면, verifier는 $\tau$를 몰라도 $P(z) - y$ 임을 암호학적으로 보장할 수 있는 것이다. 
 
+이렇게, post-danksharding이라 불리는 EIP-4844에 대해 꽤나 자세히 알아보았다. 
+L2 Rollup의 롤업 데이터가 L1에서 어떻게 검증되고 어떻게 저장되는지의 일련의 과정을 살펴보았다.
+
+하지만, 위에서 설명한 과정과는 별개로, 실제 이더리움에서는 위에서 설명한 것과 같이 single-point에서만 검증을 하는 것이 아니라, 여러 random evaluation point를 선택하여 batch KZG proof verify를 진행한다.
+
+그래도 이정도면, L2 Rollup을 공부하기 위한 prerequisite은 뗀 것 같다. 이제 Ethereum의 DAS를 위한 여러 마일스톤(dank-sharding)과 여러 Rollup에서 채택한 롤업 구조(Blob data로 들어가는 data 등)에 대해 공부를 할 차례가 된 것 같다.
+
+하지만 그전에, EIP-4844을 code level에서 공부해보고 실제로 사용해본 뒤에 넘어가보도록 해야겠다.  
+
 **KZG Commitment 전체 과정.**
 ![KZG sequence](/assets/img/posts/2025-12-15-KZGCommitment/KZGCommitment_sequence.png "KZG sequence")
