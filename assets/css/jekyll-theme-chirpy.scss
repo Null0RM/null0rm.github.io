@@ -9,3 +9,167 @@
 ';
 
 /* append your custom style below */
+
+/* =====================================================
+   nullorm playground — Custom UI
+   Web3 / Security theme enhancements
+   ===================================================== */
+
+/* ---------- Accent color tokens ---------- */
+:root {
+  --accent: #3b82f6;         /* blue-500 */
+  --accent-dark: #60a5fa;    /* blue-400 — brighter for dark bg */
+}
+
+/* ---------- Light mode overrides ---------- */
+html:not([data-mode="dark"]) {
+  --link-color: var(--accent);
+  --link-underline-color: #bfdbfe;
+  --toc-highlight: var(--accent);
+  --checkbox-checked-color: var(--accent);
+  --blockquote-border-color: #cbd5e1;
+  --blockquote-text-color: #475569;
+  --highlight-bg-color: #f8fafc;
+  --code-color: #1e40af;
+  --tag-border: #bfdbfe;
+  --tag-hover: #dbeafe;
+}
+
+/* ---------- Dark mode overrides ---------- */
+html[data-mode="dark"] {
+  --link-color: var(--accent-dark);
+  --link-underline-color: #1e3a5f;
+  --toc-highlight: var(--accent-dark);
+  --checkbox-checked-color: var(--accent-dark);
+  --main-bg: #0f1117;
+  --sidebar-bg: #161b22;
+  --card-bg: #161b22;
+  --card-hover-bg: #1f2937;
+  --button-bg: #1f2937;
+  --btn-border-color: #30363d;
+  --main-border-color: #21262d;
+  --highlight-bg-color: #161b22;
+  --code-color: #93c5fd;
+  --blockquote-border-color: #30363d;
+  --blockquote-text-color: #8b949e;
+  --text-color: #c9d1d9;
+  --heading-color: #e6edf3;
+  --tag-border: #30363d;
+  --tag-hover: #21262d;
+}
+
+/* Also apply dark overrides when system prefers dark and no explicit mode is set */
+@media (prefers-color-scheme: dark) {
+  html:not([data-mode="light"]) {
+    --link-color: var(--accent-dark);
+    --link-underline-color: #1e3a5f;
+    --toc-highlight: var(--accent-dark);
+    --main-bg: #0f1117;
+    --sidebar-bg: #161b22;
+    --card-bg: #161b22;
+    --card-hover-bg: #1f2937;
+    --button-bg: #1f2937;
+    --btn-border-color: #30363d;
+    --main-border-color: #21262d;
+    --highlight-bg-color: #161b22;
+    --code-color: #93c5fd;
+    --blockquote-border-color: #30363d;
+    --blockquote-text-color: #8b949e;
+    --text-color: #c9d1d9;
+    --heading-color: #e6edf3;
+  }
+}
+
+/* ---------- Typography ---------- */
+h1, h2, h3, h4, h5, h6 {
+  letter-spacing: -0.3px;
+}
+
+/* Post content headings — subtle left accent bar on h2 */
+.post-content h2 {
+  border-left: 3px solid var(--accent);
+  padding-left: 0.6rem;
+  margin-left: -0.75rem;
+}
+
+html[data-mode="dark"] .post-content h2,
+@media (prefers-color-scheme: dark) {
+  html:not([data-mode="light"]) .post-content h2 {
+    border-left-color: var(--accent-dark);
+  }
+}
+
+/* ---------- Links ---------- */
+a {
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+  transition: color 0.15s ease, opacity 0.15s ease;
+}
+
+a:hover {
+  opacity: 0.8;
+}
+
+/* ---------- Code blocks ---------- */
+div.highlight {
+  border-radius: 8px;
+  border: 1px solid var(--main-border-color, #e2e8f0);
+  overflow: hidden;
+}
+
+/* Inline code */
+code:not([class]) {
+  border-radius: 4px;
+  padding: 0.15em 0.4em;
+  font-size: 0.875em;
+}
+
+/* ---------- Blockquotes ---------- */
+blockquote {
+  border-left-width: 3px;
+  border-radius: 0 6px 6px 0;
+  padding: 0.75rem 1.25rem;
+  font-style: normal;
+}
+
+/* ---------- Post cards ---------- */
+.card {
+  border-radius: 10px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+/* ---------- Tags ---------- */
+.post-tag {
+  border-radius: 20px;
+  font-size: 0.78rem;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+/* ---------- TOC ---------- */
+#toc-wrapper {
+  border-left: 2px solid var(--toc-highlight);
+  padding-left: 0.5rem;
+}
+
+/* ---------- Tables ---------- */
+.post-content table {
+  border-radius: 8px;
+  overflow: hidden;
+  font-size: 0.92em;
+}
+
+/* ---------- Sidebar site title ---------- */
+#sidebar .site-title a {
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+/* ---------- Smooth scrolling ---------- */
+html {
+  scroll-behavior: smooth;
+}
