@@ -1,6 +1,6 @@
 ---
 title: Abusing Web3 - EtherHiding 
-date: 2025-12-09 15:00:00 +0900
+date: 2025-12-11 15:00:00 +0900
 ---
 
 예전에 ENKI에서 발간한 [EtherHiding](https://www.enki.co.kr/media-center/blog/analysis-of-the-clearfake-campaign-using-clickfix-and-etherhiding-techniques)기법에 관한 글을 읽은 적이 있었다. 그러다가 이번에 react에서 CVE 10.0점짜리 react2shell 취약점이 나오며 새롭게 등장한 [react2shell + etherHiding 기법을 합친 북한의 공격](https://www.sysdig.com/blog/etherrat-dprk-uses-novel-ethereum-implant-in-react2shell-attacks)에 대한 글을 읽고, ~~웹서비스보안쪽은 문외한이지만~~ 웹사이트 피싱 등 공격에 블록체인이 사용된다는 안타까움과 함께, 해당 공격 기법에 대해 간략하게나마 공부해보았다. 
